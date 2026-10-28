@@ -5,4 +5,4 @@
 window.TAGGO_API = 'https://script.google.com/a/macros/elevateeval.com/s/AKfycbz7xXmmzlhicmAu-dbRHnn75f-U4xXBlpxAKLa6zd3ZVaMJpMOhNDNEVJvcyFLsl4tC/exec';
 
 // 2. Your school's name, shown under the Tag & Go logo.
-window.TAGGO_SCHOOL = 'Parent check-in';
+window.TAGGO_SCHOOL = 'Oakdale Elementary';
