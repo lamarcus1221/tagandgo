@@ -2,7 +2,7 @@
 
 // 1. Paste the Web app URL of your Parent Check-In Apps Script deployment
 //    (Deploy → Manage deployments → copy the URL that ends in /exec).
-window.TAGGO_API = 'PASTE_PARENT_CHECKIN_EXEC_URL_HERE';
+window.TAGGO_API = 'https://script.google.com/a/macros/elevateeval.com/s/AKfycbz7xXmmzlhicmAu-dbRHnn75f-U4xXBlpxAKLa6zd3ZVaMJpMOhNDNEVJvcyFLsl4tC/exec';
 
 // 2. Your school's name, shown under the Tag & Go logo.
 window.TAGGO_SCHOOL = 'Parent check-in';
