@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tag &amp; Go</title>
+<meta name="description" content="Check in at your school's car line with one tap.">
+<meta name="theme-color" content="#1b2a4e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tag &amp; Go">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@700;800&display=swap">
+<script src="config.js"></script>
+<style>
+:root{
+  --bg:#f3f4f7; --surface:#ffffff; --ink:#14213d; --muted:#5b6478; --line:#d9dde6;
+  --accent:#f5b700; --accent-ink:#1d1600; --navy:#1b2a4e; --navy-ink:#ffffff;
+  --ok:#1f8a4c; --ok-bg:#e3f4ea; --warn:#b3261e; --warn-bg:#fbe7e5; --info-bg:#e7ebf5;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0e1424; --surface:#171f33; --ink:#eef1f8; --muted:#a2abc0; --line:#2b3550;
+  --accent:#ffc629; --accent-ink:#1d1600; --navy:#2a3c6b; --navy-ink:#ffffff;
+  --ok:#5fd38f; --ok-bg:#163526; --warn:#ff8a80; --warn-bg:#3a1a19; --info-bg:#1d263c; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.45;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;-webkit-tap-highlight-color:transparent}
+header{background:var(--navy);color:var(--navy-ink);padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:10px}
+.mark{width:34px;height:34px;flex:none}
+header h1{font:800 26px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0}
+header h1 .amp{color:var(--accent);margin:0 .08em}
+header .sub{display:block;font:700 11px var(--body);letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin-top:2px}
+main{flex:1;width:100%;max-width:480px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
+section{display:flex;flex-direction:column;gap:18px}
+h2{font:800 34px/1 var(--display);text-transform:uppercase;margin:0;letter-spacing:.02em}
+p{margin:0}
+.muted{color:var(--muted)}
+label{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+input[type=text],input[type=password]{width:100%;font:700 32px var(--display);letter-spacing:.08em;text-align:center;padding:12px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input:focus{outline:none;border-color:var(--accent)}
+.btn{font:700 18px var(--body);border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:14px 18px;cursor:pointer;width:100%}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.dark{background:var(--navy);color:var(--navy-ink);border-color:transparent;width:auto;padding:10px 16px;font-size:16px}
+.btn:disabled{opacity:.5}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.here{aspect-ratio:1;width:min(78vw,300px);max-width:100%;margin:8px auto;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font:800 54px/0.95 var(--display);text-transform:uppercase;cursor:pointer;box-shadow:0 0 0 10px rgba(245,183,0,.25)}
+.here small{display:block;font:700 16px var(--body);text-transform:none;margin-top:8px}
+.here:active{transform:scale(.97)}
+.here:disabled{opacity:.6}
+.tagline{text-align:center}
+.tagline b{font:800 44px/1 var(--display);display:block;font-variant-numeric:tabular-nums}
+.msg{border-radius:12px;padding:14px 16px;font-weight:700}
+.msg.bad{background:var(--warn-bg);color:var(--warn)}
+.done{text-align:center;align-items:center}
+.check{width:88px;height:88px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font:800 54px var(--display)}
+.linkbtn{background:none;border:0;color:var(--muted);font:700 15px var(--body);text-decoration:underline;cursor:pointer;padding:8px;align-self:center}
+ol{margin:0;padding-left:20px;color:var(--muted);font-size:15px;display:flex;flex-direction:column;gap:4px}
+.install{background:var(--info-bg);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;font-size:15px}
+.install img{width:40px;height:40px;border-radius:10px;flex:none}
+.install div{flex:1;min-width:0}
+.install b{display:block;font-size:16px}
+.install .x{background:none;border:0;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:4px 6px}
+.share{display:inline-block;width:16px;height:16px;vertical-align:-3px}
+</style>
+</head>
+<body>
+<header>
+  <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 L20 7" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" opacity=".7"/><rect x="7" y="6" width="26" height="32" rx="6" fill="var(--accent)"/><circle cx="20" cy="12" r="2.6" fill="var(--navy)"/><path d="M12.5 26h12M20 20.5l6 5.5-6 5.5" stroke="var(--navy)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+  <div><h1>Tag<span class="amp">&amp;</span>Go</h1><span class="sub" id="school">Parent check-in</span></div>
+</header>
+<main>
+
+  <!-- Install hint (hidden once installed) -->
+  <div class="install" id="installBox" hidden>
+    <img src="icons/icon-192.png" alt="">
+    <div id="installTxt"><b>Put Tag &amp; Go on your home screen</b>Open it with one tap in the car line.</div>
+    <button class="btn dark" id="installBtn" type="button" hidden>Install</button>
+    <button class="x" id="installClose" type="button" aria-label="Hide">×</button>
+  </div>
+
+  <div id="configMsg" class="msg bad" hidden>This app isn't connected to a school yet. Please contact your school office.</div>
+
+  <!-- First time: save tag + code -->
+  <section id="setupView" hidden>
+    <div style="display:flex;flex-direction:column;gap:8px"><h2>Set up your phone</h2>
+      <p class="muted">Enter the tag number and family code from your school car tag. You only do this once.</p></div>
+    <form id="setupForm" style="display:flex;flex-direction:column;gap:16px" autocomplete="off">
+      <div><label for="tagIn">Car tag number</label><input id="tagIn" type="text" inputmode="numeric" maxlength="8" required></div>
+      <div><label for="codeIn">Family code</label><input id="codeIn" type="password" inputmode="numeric" maxlength="8" required></div>
+      <button class="btn primary" type="submit" id="saveBtn">Save</button>
+    </form>
+    <div id="setupMsg" class="msg bad" hidden></div>
+  </section>
+
+  <!-- Home: the button -->
+  <section id="homeView" hidden>
+    <p class="tagline muted">Checking in for tag<b id="tagShow">—</b></p>
+    <button class="here" id="hereBtn" type="button">I'm here<small>Tap when you're in the car line</small></button>
+    <div id="homeMsg" class="msg bad" hidden></div>
+    <ol>
+      <li>Tap only when you're on school grounds in the car line.</li>
+      <li>Keep your car tag in the window. Staff still check it at the curb.</li>
+      <li>No tag today? Pull up anyway and have your photo ID ready.</li>
+    </ol>
+    <button class="linkbtn" id="switchBtn" type="button">Use a different tag</button>
+  </section>
+
+  <!-- Done -->
+  <section id="doneView" hidden class="done">
+    <div class="check" aria-hidden="true">✓</div>
+    <h2>You're checked in</h2>
+    <p id="doneTxt">Tag #— is on the dismissal screens.</p>
+    <p class="muted">Please pull forward with your tag showing. Your student will be brought to your car.</p>
+    <button class="linkbtn" id="backBtn" type="button">Back</button>
+  </section>
+
+</main>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var API = window.TAGGO_API || '';
+  var KEY = 'taggo-family';
+  var fam = null;
+  if (window.TAGGO_SCHOOL) $('school').textContent = window.TAGGO_SCHOOL;
+
+  function load(){ try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e) { return null; } }
+  function save(v){ try { if (v) localStorage.setItem(KEY, JSON.stringify(v)); else localStorage.removeItem(KEY); } catch(e) {} }
+  function norm(s){ return String(s == null ? '' : s).trim().toUpperCase().replace(/^0+(?=\w)/, ''); }
+
+  // Talks to the Parent Check-In Apps Script. Sent as plain text so the browser
+  // doesn't need a pre-check request, which Apps Script can't answer.
+  function call(action, tag, code){
+    if (!/^https:\/\/script\.google\.com\//.test(API)) return Promise.reject(new Error("This app isn't connected to a school yet. Please contact your school office."));
+    if (navigator.onLine === false) return Promise.reject(new Error('No internet connection. Pull up with your tag showing and staff will call your student.'));
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctrl) ctrl.abort(); }, 20000);
+    return fetch(API, { method: 'POST', body: JSON.stringify({ action: action, tag: tag, code: code }), redirect: 'follow', signal: ctrl ? ctrl.signal : undefined })
+      .then(function(r){ return r.json(); })
+      .catch(function(){ throw new Error('Could not reach the school. Check your signal and try again, or pull up with your tag showing.'); })
+      .then(function(d){ clearTimeout(timer); if (!d || !d.ok) throw new Error((d && d.error) || 'Something went wrong. Please try again.'); return d; },
+            function(e){ clearTimeout(timer); throw e; });
+  }
+
+  function show(v){ ['setupView','homeView','doneView'].forEach(function(id){ $(id).hidden = id !== v; }); }
+  function home(){ $('tagShow').textContent = '#' + fam.tag; $('homeMsg').hidden = true; $('hereBtn').disabled = false; show('homeView'); }
+
+  $('setupForm').onsubmit = function(e){
+    e.preventDefault();
+    var tag = norm($('tagIn').value), code = $('codeIn').value.trim();
+    if (!tag || !code) return;
+    $('saveBtn').disabled = true; $('saveBtn').textContent = 'Checking…'; $('setupMsg').hidden = true;
+    call('verify', tag, code).then(function(){
+      fam = { tag: tag, code: code }; save(fam); $('codeIn').value = ''; home();
+    }).catch(function(err){
+      $('setupMsg').textContent = err.message; $('setupMsg').hidden = false;
+    }).then(function(){ $('saveBtn').disabled = false; $('saveBtn').textContent = 'Save'; });
+  };
+
+  $('hereBtn').onclick = function(){
+    $('hereBtn').disabled = true; $('homeMsg').hidden = true;
+    $('hereBtn').firstChild.nodeValue = 'Sending…';
+    call('checkin', fam.tag, fam.code).then(function(r){
+      $('doneTxt').textContent = r.already ? 'Tag #' + r.tag + ' was already on the dismissal screens.' : 'Tag #' + r.tag + ' is on the dismissal screens.';
+      if (navigator.vibrate) try { navigator.vibrate(60); } catch(e) {}
+      show('doneView');
+    }).catch(function(err){
+      $('homeMsg').textContent = err.message; $('homeMsg').hidden = false;
+      if (/don't match/.test(err.message)) { save(null); }
+    }).then(function(){ $('hereBtn').disabled = false; $('hereBtn').firstChild.nodeValue = "I'm here"; });
+  };
+  $('backBtn').onclick = home;
+  $('switchBtn').onclick = function(){ save(null); fam = null; $('tagIn').value = ''; show('setupView'); $('tagIn').focus(); };
+
+  // ---------- install to home screen ----------
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  var dismissed = false; try { dismissed = localStorage.getItem('taggo-install-hidden') === '1'; } catch(e) {}
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var deferred = null;
+  var SHARE_ICON = '<svg class="share" viewBox="0 0 24 24" aria-label="Share"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  if (!standalone && !dismissed) {
+    if (isIOS) {
+      $('installTxt').innerHTML = '<b>Put Tag &amp; Go on your home screen</b>In Safari, tap ' + SHARE_ICON + ' Share, then <b style="display:inline">Add to Home Screen</b>.';
+      $('installBox').hidden = false;
+    }
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault(); deferred = e;
+      $('installBtn').hidden = false; $('installBox').hidden = false;
+    });
+  }
+  $('installBtn').onclick = function(){
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function(){ deferred = null; $('installBox').hidden = true; });
+  };
+  window.addEventListener('appinstalled', function(){ $('installBox').hidden = true; });
+  $('installClose').onclick = function(){ $('installBox').hidden = true; try { localStorage.setItem('taggo-install-hidden', '1'); } catch(e) {} };
+
+  if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+
+  if (!/^https:\/\/script\.google\.com\//.test(API)) $('configMsg').hidden = false;
+  fam = load();
+  if (fam && fam.tag && fam.code) home(); else show('setupView');
+})();
+</script>
+</body>
+</html>
